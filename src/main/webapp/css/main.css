@@ -1,0 +1,262 @@
+#containerDirac {
+	box-shadow: 10px 10px 5px #888;
+	background-color: #e4e4e4;
+	border: 1px;
+	border-style: solid;
+	border-color: #c1c1c1;
+	border-radius: 5px;
+	padding: 5px;
+	margin-right: 9px;
+}
+
+#presentationDirac  {
+	color: black;
+	font-size: 120%;
+	font-weight: bold;
+	border-bottom: 1px solid #CCCCCC;
+	width: 90%;
+	margin-bottom: 15px;
+	padding: 10px 0 0 10px;
+}
+
+#contentDirac  {
+	margin-top: 15px;
+}
+
+#reset {
+	clear: both;
+}
+#myJdl{
+	margin: 10px;
+	padding: 10px;
+	border: 1px solid gold;
+	background-color: LightYellow; 
+	float: left;
+	width: 63%;
+}
+
+#myJdl input{
+	width: 240px;
+}
+
+#addMenu{
+margin: 10px;
+	padding: 10px;
+	border: 1px solid green;
+	background-color: LightGreen;
+	float: right;
+	width: 28%;
+}
+
+#addMenù div{
+	margin: 5px 0;
+	font-weight: bold;
+}
+
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background: url(/IGIPortalDIRAC-0.0.1/images/overlay2.png) repeat;
+	opacity: .85;
+	filter: alpha(opacity=85);
+	z-index: 101;
+}
+.modal-window {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin: 0;
+	padding: 0;
+	z-index: 102;
+	background: #fff;
+	border: solid 8px #000;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+}
+.close-window {
+	position: absolute;
+	width: 47px;
+	height: 47px;
+	right: -23px;
+	top: -23px;
+	background: transparent url(/IGIPortalDIRAC-0.0.1/images/close-button2.png) no-repeat scroll right top;
+	text-indent: -99999px;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.status {
+	height: 15px;
+	width: 15px;
+	border: 1px solid black;
+	float: left;
+	margin-right: 10px;
+}
+
+#statusValue {
+	float: left;
+}
+
+#failedStatus {
+	background-color: red;
+}
+
+#doneStatus {
+	background-color: green;
+}
+
+#receivedStatus {
+	background-color: grey;
+}
+
+#waitingStatus {
+	background-color: orange;
+}
+
+#runningStatus {
+	background-color: blue;
+}
+
+#deletedStatus {
+	background-color: darkgrey;
+}
+
+#reset {
+	clear: both;
+}
+
+.rightAlign{
+	float: right;
+}
+
+.help{
+	width: 80%;
+	color: #606060;
+	font-size: 11px;
+	text-align: justify;
+}
+
+.help a{
+	color: #0066CC;
+}
+
+.help a:hover{
+	color: #0066CC;
+	text-decoration: none;
+}
+
+.help a:visited{
+	color: #0066CC;
+}
+
+.moreHelp{
+	display: none;
+}
+
+.operationButton{
+	display: none; 
+	border: 1px solid DarkBlue;
+	background-color: LightBlue; 
+	margin-bottom: 10px; 
+	padding-left: 10px;  
+	margin-top: 10px;
+}
+
+#buttonBar{
+	margin-bottom: 10px;
+}
+
+.status{
+	margin-top: 7px;
+}
+
+.minorStatus{
+	color: grey;
+}
+
+.first{
+	text-align: center !important ;
+	width: 40px;
+}
+
+.templates{
+	display: none; 
+}
+
+.tempaltesCss{
+	margin: 10px;
+}
+
+#template_table_wrapper{
+	width: 100%;
+}
+
+.sorting_disabled{
+	display: none;
+}
+
+#template_table{
+	background-color: white;
+}
+
+#template_table_length{
+	float: left;
+	margin-left: 5px;
+}
+
+#template_table_filter{
+	float: right;
+	margin-right: 5px;
+}
+
+#template_table_info{
+	float: left;
+	margin-left: 5px;
+}
+
+#template_table_paginate{
+	float: right;
+	margin-right: 5px;
+	margin-bottom: 10px;
+}
+
+#template_table_paginate a{
+	padding-left: 5px;
+}
+	
+.even {
+	background-color: #F5F8FB;
+}
+
+.effect:hover td{
+	background:  #D3E8F1;
+	border: 1px solid #D3E8F1;
+	border-bottom-color: #D7D7D7;
+}
+
+.jdlDiv{
+	display: none;
+}
+
+.aui-button-content{
+	margin: 10px 10px 0 0;
+}
+
+.ownerYes{
+	color: green;
+}
+
+.ownerNo{
+	color: red;
+}
+
+.center{
+	text-align: center;
+}
