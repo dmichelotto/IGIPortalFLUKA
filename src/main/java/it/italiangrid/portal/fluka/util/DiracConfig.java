@@ -42,5 +42,27 @@ public class DiracConfig {
 			throw new DiracException("properties-file-not-found");
 		}
 	}
+	
+	public static String getUserProperties(File file, String key) throws DiracException{
+		
+		try {
+			FileInputStream inStream = new FileInputStream(file);
+
+			Properties prop = new Properties();
+
+			prop.load(inStream);
+
+			inStream.close();
+			if (prop.getProperty(key) != null)
+				return prop.getProperty(key);
+			else
+				throw new DiracException("properties-not-found");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new DiracException("properties-file-not-found");
+		}
+		
+	}
 
 }

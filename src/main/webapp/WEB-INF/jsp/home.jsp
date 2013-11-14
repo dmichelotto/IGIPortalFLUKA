@@ -113,6 +113,35 @@
 		</aui:column>
 		</aui:fieldset>
 		</div>
+		<div id="buttonBar">
+		<aui:fieldset >
+		<aui:column columnWidth="50">
+			<c:if test="${template != null }">
+			<portlet:renderURL var="useTemplateURL">
+				<portlet:param name="myaction" value="showSubmitFlukaJob"/>
+				<portlet:param name="path" value="${template }"/>
+			</portlet:renderURL>
+			<aui:form action="${useTemplateURL }">
+				<aui:button-row>
+					<aui:button type="submit" value="Submit New FLUKA Job"/>
+				</aui:button-row>
+			</aui:form>
+			</c:if>
+			<c:if test="${template == null }">
+			FLUKA not configured. Contact Administrators.
+			</c:if>
+		</aui:column>
+		
+		<aui:column columnWidth="50">
+			<aui:form id="refresh" name="refresh">
+				<aui:button-row >
+					<aui:button style="float: right;" type="button" value="Refresh" onClick="location.href='${reloadPage}';"/>
+				</aui:button-row>
+			</aui:form>
+		</aui:column>
+		</aui:fieldset>
+		</div>
+		
 		<jsp:useBean id="jobs"
 				type="java.util.List<it.italiangrid.portal.fluka.db.domain.Jobs>"
 				scope="request" />
@@ -222,12 +251,6 @@
 								<portlet:param name="jobId" value="${job.jobId }"/>
 							</portlet:actionURL>
 							<liferay-ui:icon image="configuration" message="Reschedule" url="${rescheduleURL}" />
-							
-							<portlet:renderURL var="duplicateURL">
-								<portlet:param name="myaction" value="showSubmitJob"/>
-								<portlet:param name="jobId" value="${job.jobId }"/>
-							</portlet:renderURL>
-							<liferay-ui:icon image="copy" message="Duplicate" url="${duplicateURL}" />
 						
 							<portlet:actionURL var="deleteURL">
 								<portlet:param name="myaction" value="deleteJob"/>

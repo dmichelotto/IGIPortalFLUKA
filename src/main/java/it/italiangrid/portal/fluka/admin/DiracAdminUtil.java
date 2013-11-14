@@ -28,7 +28,7 @@ public class DiracAdminUtil {
 		
 		log.info("Execute command: " + cmd);
 		
-		File path = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Dirac.properties", "dirac.admin.homedir"));
+		File path = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Fluka.properties", "dirac.admin.homedir"));
 		
 		try {
 			Process p = Runtime.getRuntime().exec(cmd, null, path);
@@ -86,7 +86,7 @@ public class DiracAdminUtil {
 		
 		log.info("Execute command: " + logcmd);
 		
-		File path = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Dirac.properties", "dirac.admin.homedir"));
+		File path = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Fluka.properties", "dirac.admin.homedir"));
 		
 		try {
 			Process p = Runtime.getRuntime().exec(cmd, null, path);
@@ -209,7 +209,7 @@ public class DiracAdminUtil {
 		
 		log.info("Execute command: " + logcmd);
 		
-		File exeDir = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Dirac.properties", "dirac.admin.homedir"));
+		File exeDir = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Fluka.properties", "dirac.admin.homedir"));
 		
 		try {
 			boolean status = true;
@@ -301,7 +301,7 @@ public class DiracAdminUtil {
 	}
 
 	public void getInputSandbox(String path, String jobId) throws DiracException {
-		File exeDir = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Dirac.properties", "dirac.admin.homedir"));
+		File exeDir = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Fluka.properties", "dirac.admin.homedir"));
 		
 		String[] cmd = {"dirac-wms-job-get-input", "-D", path, jobId};
 		
@@ -320,7 +320,7 @@ public class DiracAdminUtil {
 		List<String> result = new ArrayList<String>();
 		result.add("ANY");
 		
-		File exeDir = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Dirac.properties", "dirac.admin.homedir"));
+		File exeDir = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Fluka.properties", "dirac.admin.homedir"));
 		
 		String[] cmd = {"dirac-admin-get-site-mask"};
 		

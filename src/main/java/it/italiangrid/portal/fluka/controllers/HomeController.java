@@ -1,5 +1,6 @@
 package it.italiangrid.portal.fluka.controllers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,6 @@ import it.italiangrid.portal.fluka.db.service.JobsService;
 import it.italiangrid.portal.fluka.db.service.ProxiesService;
 import it.italiangrid.portal.fluka.exception.DiracException;
 import it.italiangrid.portal.fluka.util.DiracConfig;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -70,7 +70,19 @@ public class HomeController {
 
 			if (user != null) {
 				log.info("User logged in.....");
-				return "home";
+				
+				File userProperties = new File(System.getProperty("java.io.tmpdir") + "/users/" + user.getUserId() + "/" + DiracConfig.getProperties("Fluka.properties", "fluka.userproperties.file")); 
+				
+				if(userProperties.exists()){
+					try{
+						DiracConfig.getUserProperties(userProperties, "lfc.fluka.home");
+					} catch(DiracException e){
+						return "configureFluka";
+					}
+					return "home";
+				}
+				
+				return "configureFluka";
 			}
 
 		} catch (Exception e) {
@@ -162,11 +174,26 @@ public class HomeController {
 	@ModelAttribute("reloadPage")
 	public String getReloadPage(){
 		try {
-			return DiracConfig.getProperties("Dirac.properties", "dirac.reload.page");
+			return DiracConfig.getProperties("Fluka.properties", "dirac.reload.page");
 		} catch (DiracException e) {
 			e.printStackTrace();
 		}
 		return "https://portal.italiangrid.it/job";
+	}
+	
+	@ModelAttribute("template")
+	public String getTemplates(RenderRequest request){
+		
+		String result;
+		try {
+			result = DiracConfig.getProperties("Fluka.properties", "fluka.template.path");
+		} catch (DiracException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result=null;
+		}
+		
+		return result;	
 	}
 	
 }

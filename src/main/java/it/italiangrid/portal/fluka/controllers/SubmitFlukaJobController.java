@@ -13,11 +13,8 @@ import it.italiangrid.portal.fluka.admin.DiracAdminUtil;
 import it.italiangrid.portal.fluka.db.service.JobJdlsService;
 import it.italiangrid.portal.fluka.exception.DiracException;
 import it.italiangrid.portal.fluka.model.Jdl;
-import it.italiangrid.portal.fluka.model.Template;
 import it.italiangrid.portal.fluka.util.DiracConfig;
 import it.italiangrid.portal.fluka.util.DiracUtil;
-import it.italiangrid.portal.fluka.util.TemplateList;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,9 +27,9 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.User;
 import com.liferay.portal.util.PortalUtil;
 
-@Controller("diracSubmitJobController")
+@Controller("diracSubmitFlukaJobController")
 @RequestMapping(value = "VIEW")
-public class SubmitJobController {
+public class SubmitFlukaJobController {
 	/**
 	 * Logger
 	 */
@@ -52,9 +49,9 @@ public class SubmitJobController {
 	 * 
 	 * @return Return the portlet home page.
 	 */
-	@RenderMapping(params="myaction=showSubmitJob")
+	@RenderMapping(params="myaction=showSubmitFlukaJob")
 	public String showHomePage(){
-		return "submit";
+		return "submitFluka";
 	}
 	
 	@ModelAttribute("jdl")
@@ -187,34 +184,6 @@ public class SubmitJobController {
 			e.printStackTrace();
 		}
 		return null;
-	}
-	
-	@ModelAttribute("templateList")
-	public List<Template> getTemplates(RenderRequest request){
-		try {
-			User user = PortalUtil.getUser(request);
-
-			if (user != null) {
-				TemplateList tl = new TemplateList(user.getUserId());
-				tl.load();
-				return tl.getTemplates();
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new TemplateList().getTemplates();	
-	}
-	
-	@ModelAttribute("viewTemplate")
-	public boolean viewTempalte(RenderRequest request){
-		
-		String value = request.getParameter("viewTemplate");
-		if(value!= null && Boolean.parseBoolean(value))
-			return true;
-		
-		return false;
-		
 	}
 	
 }

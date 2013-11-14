@@ -31,7 +31,7 @@ public class DiracUtil {
 		
 		myJdl.copyJob(diracJdl, userId);
 		
-		myJdl.setJobName("Portal_Job_Copy_of_" + diracJdl.getJobId());
+		myJdl.setJobName("FLUKA_Job_Copy_of_" + diracJdl.getJobId());
 		
 		return myJdl;
 	}
@@ -42,7 +42,7 @@ public class DiracUtil {
 		
 		myJdl.copyJob(null, userId, true, path);
 		
-		myJdl.setJobName("Job_Template_" + myJdl.getJobName());
+		myJdl.setJobName("FLUKA_Template_" + myJdl.getJobName());
 		
 		return myJdl;
 	}

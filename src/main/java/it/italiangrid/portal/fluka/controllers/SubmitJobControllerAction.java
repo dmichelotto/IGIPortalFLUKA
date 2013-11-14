@@ -63,9 +63,9 @@ public class SubmitJobControllerAction {
 				
 				
 				String path;
-				String diracWrapper = DiracConfig.getProperties("Dirac.properties", "dirac.wrapper.script");
-				String diracHome = DiracConfig.getProperties("Dirac.properties", "dirac.admin.homedir");
-				String templateHome = DiracConfig.getProperties("Dirac.properties", "dirac.template.home");
+				String diracWrapper = DiracConfig.getProperties("Fluka.properties", "dirac.wrapper.script");
+				String diracHome = DiracConfig.getProperties("Fluka.properties", "dirac.admin.homedir");
+				String templateHome = DiracConfig.getProperties("Fluka.properties", "dirac.template.home");
 				
 				log.info(uploadRequest.getParameter("settedPath")!=null?uploadRequest.getParameter("settedPath"):"is null");
 				

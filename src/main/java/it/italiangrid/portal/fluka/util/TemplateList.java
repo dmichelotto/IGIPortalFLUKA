@@ -129,8 +129,8 @@ public class TemplateList {
 		String templateHome;
 		String tomcatTemp = System.getProperty("java.io.tmpdir");
 		try {
-			diracHome = DiracConfig.getProperties("Dirac.properties", "dirac.admin.homedir");
-			templateHome = DiracConfig.getProperties("Dirac.properties", "dirac.template.home");
+			diracHome = DiracConfig.getProperties("Fluka.properties", "dirac.admin.homedir");
+			templateHome = DiracConfig.getProperties("Fluka.properties", "dirac.template.home");
 		} catch (DiracException e) {
 			diracHome = "diracHome";
 			templateHome = "Template";

@@ -242,7 +242,7 @@ public class UploadCertificateController {
 			
 			URL url;
 			try {
-				url = new URL(DiracConfig.getProperties("Dirac.properties", "registration.rest.url"));
+				url = new URL(DiracConfig.getProperties("Fluka.properties", "registration.rest.url"));
 			} catch (DiracException e) {
 				url = new URL("http://portal.italiangrid.it:8080/Registration-4/rest/addtask");
 				e.printStackTrace();

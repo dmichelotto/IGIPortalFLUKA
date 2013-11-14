@@ -53,7 +53,7 @@ public class Checker implements Runnable{
 		
 		File datFile;
 		try {
-			datFile = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Dirac.properties", "dirac.admin.homedir") + "/" + DiracConfig.getProperties("Dirac.properties", "dirac.checker.store"));
+			datFile = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Fluka.properties", "dirac.admin.homedir") + "/" + DiracConfig.getProperties("Fluka.properties", "dirac.checker.store"));
 		} catch (DiracException e) {
 			datFile = new File(System.getProperty("java.io.tmpdir") + "/diracAdmin/checker.dat");
 		}
@@ -85,7 +85,7 @@ public class Checker implements Runnable{
 		
 		File datFile;
 		try {
-			datFile = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Dirac.properties", "dirac.admin.homedir") + "/" + DiracConfig.getProperties("Dirac.properties", "dirac.checker.store"));
+			datFile = new File(System.getProperty("java.io.tmpdir") + "/" + DiracConfig.getProperties("Fluka.properties", "dirac.admin.homedir") + "/" + DiracConfig.getProperties("Fluka.properties", "dirac.checker.store"));
 		} catch (DiracException e) {
 			datFile = new File(System.getProperty("java.io.tmpdir") + "/diracAdmin/checker.dat");
 		}
@@ -196,7 +196,7 @@ public class Checker implements Runnable{
 	 */
 	private void sendMail(Notify n, List<String> status) throws DiracException {
 		
-		String from = DiracConfig.getProperties("Dirac.properties", "igiportal.mail");
+		String from = DiracConfig.getProperties("Fluka.properties", "igiportal.mail");
 		String mailSubject = "";
 		String mailContent = "";
 		String jobIDs = "";
@@ -204,13 +204,13 @@ public class Checker implements Runnable{
 		
 		if(status.size()>1){
 			
-			mailSubject = DiracConfig.getProperties("Dirac.properties", "dirac.checker.subject.multi");
-			mailContent = DiracConfig.getProperties("Dirac.properties", "dirac.checker.mail.multi");
+			mailSubject = DiracConfig.getProperties("Fluka.properties", "dirac.checker.subject.multi");
+			mailContent = DiracConfig.getProperties("Fluka.properties", "dirac.checker.mail.multi");
 			
 		}else{
 		
-			mailSubject = DiracConfig.getProperties("Dirac.properties", "dirac.checker.subject.single");
-			mailContent = DiracConfig.getProperties("Dirac.properties", "dirac.checker.mail.single");
+			mailSubject = DiracConfig.getProperties("Fluka.properties", "dirac.checker.subject.single");
+			mailContent = DiracConfig.getProperties("Fluka.properties", "dirac.checker.mail.single");
 		
 		}
 		

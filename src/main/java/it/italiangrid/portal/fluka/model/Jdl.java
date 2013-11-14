@@ -69,7 +69,7 @@ public class Jdl {
 	 * Default constructor.
 	 */
 	public Jdl() {
-		this.jobName = "Portal_Job";
+		this.jobName = "FLUKA_Job";
 		this.executable = "/bin/ls";
 		this.arguments = "-latr";
 		this.stdOutput = "StdOut";
@@ -684,7 +684,7 @@ public class Jdl {
 		
 		log.info(diracJdlString);
 		
-		this.jobName = "Portal_Job";
+		this.jobName = "FLUKA_Job";
 		this.executable = "";
 		this.arguments = "";
 		this.stdOutput = "";
@@ -774,7 +774,7 @@ public class Jdl {
 						break;
 					case 1: /* Executable */
 						value= value.replaceAll("\"", "");
-						if(value.equals(DiracConfig.getProperties("Dirac.properties", "dirac.wrapper.script"))){
+						if(value.equals(DiracConfig.getProperties("Fluka.properties", "dirac.wrapper.script"))){
 							haveWrapper = true;
 						}
 					default:
