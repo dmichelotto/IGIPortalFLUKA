@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
 import it.italiangrid.portal.dbapi.domain.Certificate;
 import it.italiangrid.portal.dbapi.domain.UserInfo;
@@ -15,6 +16,8 @@ import it.italiangrid.portal.fluka.db.service.JobsService;
 import it.italiangrid.portal.fluka.db.service.ProxiesService;
 import it.italiangrid.portal.fluka.exception.DiracException;
 import it.italiangrid.portal.fluka.util.DiracConfig;
+import it.italiangrid.portal.fluka.util.LFCUtils;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -77,6 +80,7 @@ public class HomeController {
 					try{
 						DiracConfig.getUserProperties(userProperties, "lfc.fluka.home");
 					} catch(DiracException e){
+						
 						return "configureFluka";
 					}
 					return "home";
@@ -194,6 +198,35 @@ public class HomeController {
 		}
 		
 		return result;	
+	}
+	
+	@ModelAttribute("template")
+	public List<String> getFlukaHomes(RenderRequest request){
+		log.info("Getting Fluka Homes");
+		
+		try {
+			User user = PortalUtil.getUser(request);
+
+			if (user != null) {
+				log.info("User logged in.....");
+				
+				File userProperties = new File(System.getProperty("java.io.tmpdir") + "/users/" + user.getUserId() + "/" + DiracConfig.getProperties("Fluka.properties", "fluka.userproperties.file")); 
+				
+				if(userProperties.exists()){
+					try{
+					String userHome = DiracConfig.getUserProperties(userProperties, "lfc.fluka.home");
+					}catch (DiracException e) {
+						List<String> result = LFCUtils.getHomes();
+						return result;
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 }

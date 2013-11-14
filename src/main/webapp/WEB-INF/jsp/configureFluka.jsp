@@ -3,10 +3,10 @@
 
 
 <div id="containerDirac">
-	<div id="presentationDirac">Error</div>
+	<div id="presentationDirac">Configure</div>
 	<div id="contentDirac">
 	
-		Hello world.
+		
 		
 	</div>
 </div>
