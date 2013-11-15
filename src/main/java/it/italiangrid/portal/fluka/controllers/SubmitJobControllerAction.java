@@ -44,6 +44,392 @@ public class SubmitJobControllerAction {
 	 */
 	private static final Logger log = Logger.getLogger(SubmitJobControllerAction.class);
 	
+//	@ActionMapping(params="myaction=submitFlukaJob")
+//	public void submitFlukaJob(@ModelAttribute Jdl jdl, ActionRequest request, ActionResponse response){
+//		
+//		UploadPortletRequest uploadRequest = PortalUtil.getUploadPortletRequest(request);
+//		
+//		log.info("JDL:\n"+jdl);
+//		
+//		String input = uploadRequest.getParameter("input");
+//		log.info("input: " + input);
+//		String output = uploadRequest.getParameter("output");
+//		log.info("output: " + output);
+//		try {
+//			String inputFile = input.substring(input.lastIndexOf("/")+1, input.length()).replace("input_", "");
+//			String inputPath = input.substring(0, input.lastIndexOf("/")).replace(DiracConfig.getProperties("Fluka.properties", "fluka.lfc.homes.path"), "");
+//			String newArguments = "%s " + inputFile + " " + inputPath;
+//			
+//			if(!output.equals("none")){
+//				
+//				newArguments += " " + output.replace(DiracConfig.getProperties("Fluka.properties", "fluka.lfc.homes.path"), "");
+//				
+//			}
+//			
+//			jdl.setArguments(newArguments);
+//			
+//			log.info("NEW JDL:\n"+ jdl);
+//			
+//			submitJob(jdl, request, response);
+//		
+//		} catch (DiracException e) {
+//			
+//			e.printStackTrace();
+//			SessionErrors.add(request, "submit-error");
+//			SessionErrors.add(request, e.getMessage());
+//			PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
+//			SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+//			
+//			response.setRenderParameter("myaction", "showSubmitJob");
+//			request.setAttribute("jdl", jdl);
+//		}
+//		
+//	}
+	
+	@ActionMapping(params="myaction=submitFlukaJob")
+	public void submitFlukaJob(@ModelAttribute Jdl jdl, ActionRequest request, ActionResponse response){
+		
+log.info("Submitting job");
+		
+		
+		try {
+			User user = PortalUtil.getUser(request);
+			
+			UploadPortletRequest uploadRequest = PortalUtil.getUploadPortletRequest(request);
+
+			if (user != null) {
+				
+				/*
+				 * Prepare temp folder for submission
+				 */
+				
+				
+				
+				String path;
+				String diracWrapper = DiracConfig.getProperties("Fluka.properties", "dirac.wrapper.script");
+				String diracHome = DiracConfig.getProperties("Fluka.properties", "dirac.admin.homedir");
+				String templateHome = DiracConfig.getProperties("Fluka.properties", "dirac.template.home");
+				
+				log.info(uploadRequest.getParameter("settedPath")!=null?uploadRequest.getParameter("settedPath"):"is null");
+				
+				if(uploadRequest.getParameter("settedPath")!=null && !uploadRequest.getParameter("settedPath").isEmpty()){
+				
+					path = uploadRequest.getParameter("settedPath");
+					log.info("existing temp folder:" + path);
+				
+				}else{
+					
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+					Calendar cal = new GregorianCalendar();
+					Date now = cal.getTime();
+					
+					
+					String tmpDir = "JDL_"+sdf.format(now);
+					String userPath = System.getProperty("java.io.tmpdir") + "/users/"+user.getUserId();
+					path = userPath + "/DIRAC/jdls/"+tmpDir;
+					log.info("create temp folder");
+					
+				}
+				
+				
+				
+				File jdlFolder = new File(path);
+				
+				if(!jdlFolder.exists())
+					jdlFolder.mkdirs();
+				
+				jdl.setPath(path);
+				
+				log.info("temp folder: " + path);
+				
+				/*
+				 * Get inputSandbox and jdl parameters
+				 */
+				
+				List<String> inputSandbox = new ArrayList<String>();
+				
+		        File tempFile;
+		        
+		        boolean needsWrapper = false;
+		        
+		        @SuppressWarnings("unchecked")
+				Enumeration<String> paramEnum = uploadRequest.getParameterNames();
+		        while (paramEnum.hasMoreElements())
+		        {
+		        	
+		            String parameter = paramEnum.nextElement();
+		            
+		           
+		            
+		            if (parameter.startsWith("uploadFile"))
+		            {
+		            	
+		                
+		                
+		                String fileName = uploadRequest.getFileName(parameter);
+		                log.info(parameter +" = "+fileName);
+		                
+		                if(!fileName.isEmpty()){
+		                	fileName= fileName.replaceAll(" ", "_");
+		                	log.info("Uploading " + fileName);
+		                
+		                	tempFile = uploadRequest.getFile(parameter, true);
+		                	
+		                	log.info("temp file " + tempFile.getAbsolutePath());
+		                	
+			                File destination = new File(path + "/" + fileName);
+			                
+			                log.info("destination file " + destination.getAbsolutePath());
+			                
+			                FileUtil.copyFile(tempFile, destination);
+			                
+			                tempFile.delete();
+		                	
+			                inputSandbox.add(path+"/"+fileName);
+			                
+			             }
+		            }else{
+		            	
+		            	
+		            	if(parameter.contains("executableFile")){
+		            		 String fileName = uploadRequest.getFileName(parameter);
+				                log.info(parameter +" = "+fileName);
+				                
+				                if(!fileName.isEmpty()){
+				                	fileName= fileName.replaceAll(" ", "_");
+				                	needsWrapper = true;
+				                	
+				                	log.info("Uploading exe file: " + fileName);
+				                
+				                	tempFile = uploadRequest.getFile(parameter, true);
+				                	
+				                	log.info("temp file " + tempFile.getAbsolutePath());
+				                	
+					                File destination = new File(path + "/" + fileName);
+					                
+					                log.info("destination file " + destination.getAbsolutePath());
+					                
+					                FileUtil.copyFile(tempFile, destination);
+					                
+					                tempFile.delete();
+				                	
+					                inputSandbox.add(path+"/"+fileName);
+					                jdl.setExecutable(fileName);
+					                
+					             }
+		            	} else{
+			            	String value = uploadRequest.getParameter(parameter);
+			            	log.info(parameter +" = "+value);
+			            	if(parameter.contains("executable")||parameter.contains("uploadedFile_")){
+			            		File check = new File(path + "/" + value);
+			            		
+			            		if(check.exists()){
+			            			log.info("Fonunded file: " + path+"/"+value);
+			            			inputSandbox.add(path+"/"+value);
+			            			log.info("File " + value + " inserted.");
+			            		}
+			            		if(parameter.contains("executable")){
+			            			
+							        if(!value.startsWith("/"))
+							        	needsWrapper=true;
+							        
+							        jdl.setParameter(parameter, value);
+			            		}
+			            	}else{
+			            		
+			            		jdl.setParameter(parameter, value);
+						        
+			            	}
+		            	}
+		            }
+		        }
+		        
+		        /*
+		         * Setting arguments
+		         */
+		        
+		        String input = uploadRequest.getParameter("input");
+				log.info("input: " + input);
+				String output = uploadRequest.getParameter("output");
+				log.info("output: " + output);
+				
+				String inputFile = input.substring(input.lastIndexOf("/")+1, input.length()).replace("input_", "");
+				String inputPath = input.substring(0, input.lastIndexOf("/")).replace(DiracConfig.getProperties("Fluka.properties", "fluka.lfc.homes.path"), "");
+				String newArguments = "%s " + inputFile + " " + inputPath;
+				
+				if(!output.equals("none")){
+					
+					newArguments += " " + output.replace(DiracConfig.getProperties("Fluka.properties", "fluka.lfc.homes.path"), "");
+					
+				}
+				
+				jdl.setArguments(newArguments);
+				
+		        
+		        List<String> outputSandbox = new ArrayList<String>();
+				outputSandbox.add(jdl.getStdOutput());
+				outputSandbox.add(jdl.getStdError());
+				if(!jdl.getOutputSandboxRequest().isEmpty()){
+					for(String s: jdl.getOutputSandboxRequest().split(";")){
+						outputSandbox.add(s.replaceAll(" ", ""));
+					}
+				}
+				jdl.setOutputSandbox(outputSandbox);
+				
+				log.info("OutputSandbox: " + jdl.getOutputSandbox());
+		        
+				if(needsWrapper){
+					
+					String wrapperPath = System.getProperty("java.io.tmpdir") + "/" + diracHome + "/" + diracWrapper;
+					List<String> newIS = new ArrayList<String>();
+					newIS.add(wrapperPath);
+					if(!inputSandbox.isEmpty()){
+			        	newIS.addAll(inputSandbox);
+			        }
+					inputSandbox = newIS;
+					
+					
+					
+//					File wrapperFile = new File(wrapperPath);
+					
+					String destPath = path + "/" + diracWrapper;
+					
+					FileUtil.copyFile(wrapperPath, destPath);
+					
+					jdl.setExecutable(diracWrapper);
+					
+					String arguments = newIS.get(1).substring(newIS.get(1).lastIndexOf("/")+1, newIS.get(1).length()) + " " + jdl.getArguments();
+					
+					jdl.setArguments(arguments);
+				}
+				
+		        if(!inputSandbox.isEmpty()){
+		        	jdl.setInputSandbox(inputSandbox);
+		        }
+		 
+		        log.info("Jdl:\n"+jdl);
+		        
+		        /*
+				 * Save jdl on file
+				 */
+				
+				String jdlFilename = jdl.getJobName()+".jdl";
+				
+				FileOutputStream jdlFile = new FileOutputStream(path + "/" + jdlFilename);
+				jdlFile.write(jdl.toString().getBytes());
+				jdlFile.close();
+				
+				String saveOnly = uploadRequest.getParameter("saveOnly");
+				if(saveOnly==null){
+				
+					/*
+					 * Download proxy
+					 */
+					
+					DiracAdminUtil util = new DiracAdminUtil();
+					util.dowloadUserProxy(path, user.getScreenName(), jdl.getVo()+"_user");
+					
+					/*
+					 * Submit job
+					 */
+					
+					List<Long> ids = util.submitJob(path, path, jdlFilename);
+					
+					/*
+					 * Adding notify task
+					 */
+					boolean isNotify = isNotificationSetted(user);
+					
+					log.info("notify = " + isNotify);
+					if(isNotify){
+						Notify notify = new Notify(user.getEmailAddress(), user.getFirstName(), ids);
+						Checker.addNotify(notify);
+					}
+				}
+				
+				/*
+				 * Manage Template
+				 */
+				String saveAsTemplate = uploadRequest.getParameter("saveAsTemplate");
+				String shareTemplate = uploadRequest.getParameter("shareTemplate");
+				
+				log.info("saveAsTempalte: " + saveAsTemplate);				
+				log.info("shareTemplate: " + shareTemplate);
+				
+				if(saveAsTemplate!=null){
+					String copyPath;
+					if(shareTemplate==null){
+						/*
+						 * user template
+						 */
+						copyPath = System.getProperty("java.io.tmpdir") + "/users/"+user.getUserId()+"/DIRAC/"+ templateHome + "/" + jdl.getJobName().replaceAll(" ", "_")+"@"+user.getUserId();
+						copyPath = DiracUtil.checkIfExsist(copyPath);
+						
+					} else {
+						/*
+						 * shared template
+						 */
+						copyPath = System.getProperty("java.io.tmpdir") + "/"+diracHome+"/"+ templateHome + "/" + jdl.getJobName().replaceAll(" ", "_")+"@"+user.getUserId();
+						copyPath = DiracUtil.checkIfExsist(copyPath);
+					}
+					File destination = new File(copyPath);
+					FileUtil.copyDirectory(jdlFolder, destination);
+				}
+				
+				
+				/*
+				 * Delete temp folder
+				 */
+				DiracUtil.delete(jdlFolder);
+				
+				
+			}
+			String saveAsTemplate = uploadRequest.getParameter("saveAsTemplate");
+			String saveOnly = uploadRequest.getParameter("saveOnly");
+			String shareTemplate = uploadRequest.getParameter("shareTemplate");
+			
+			if(saveOnly!=null){
+				response.setRenderParameter("myaction", "showSubmitJob");
+				response.setRenderParameter("viewTemplate", "true");
+			}else{
+				SessionMessages.add(request, "submit-successufully");
+			}
+			if(saveAsTemplate!=null){
+				SessionMessages.add(request, "save-successufully");
+			}
+			if(shareTemplate!=null){
+				SessionMessages.add(request, "shared-successufully");
+			}
+			return;
+
+		} catch (Exception e) {
+			
+			if(e.getMessage().contains("no-proxy-uploaded")){
+				
+				SessionErrors.add(request, e.getMessage());
+				PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
+				SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+				
+				response.setRenderParameter("showUploadCert", "true");
+				
+			}else{
+				if (e.getMessage().equals("submit-error")){
+					SessionErrors.add(request, "check-jdl");
+				}else{
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		SessionErrors.add(request, "submit-error");
+		PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
+		SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+		
+		response.setRenderParameter("myaction", "showSubmitJob");
+		request.setAttribute("jdl", jdl);
+		
+	}
+	
 	@ActionMapping(params="myaction=submitJob")
 	public void submitJob(@ModelAttribute Jdl jdl, ActionRequest request, ActionResponse response){
 		log.info("Submitting job");
@@ -193,7 +579,9 @@ public class SubmitJobControllerAction {
 							        jdl.setParameter(parameter, value);
 			            		}
 			            	}else{
-						        jdl.setParameter(parameter, value);
+			            		
+			            		jdl.setParameter(parameter, value);
+						        
 			            	}
 		            	}
 		            }

@@ -207,13 +207,28 @@ public class SubmitJobController {
 	}
 	
 	@ModelAttribute("viewTemplate")
-	public boolean viewTempalte(RenderRequest request){
+	public boolean viewTemplate(RenderRequest request){
 		
 		String value = request.getParameter("viewTemplate");
 		if(value!= null && Boolean.parseBoolean(value))
 			return true;
 		
 		return false;
+		
+	}
+	
+	@ModelAttribute("productionTemplate")
+	public String productionTemplate(RenderRequest request){
+		
+		String result;
+		try {
+			result = DiracConfig.getProperties("Fluka.properties", "fluka.template.path");
+		} catch (DiracException e) {
+			e.printStackTrace();
+			result=null;
+		}
+		
+		return result;	
 		
 	}
 	

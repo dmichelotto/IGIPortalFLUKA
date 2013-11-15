@@ -169,6 +169,14 @@ margin: 10px;
 	margin-top: 10px;
 }
 
+.adminButton{ 
+	border: 1px solid Yellow;
+	background-color: LightYellow; 
+	margin-bottom: 10px; 
+	padding-left: 10px;  
+	margin-top: 10px;
+}
+
 #buttonBar{
 	margin-bottom: 10px;
 }

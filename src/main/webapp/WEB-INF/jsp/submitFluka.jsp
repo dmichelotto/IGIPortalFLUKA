@@ -163,7 +163,7 @@
 			message="operation-error" />
 			
 		<portlet:actionURL var="submitUrl">
-			<portlet:param name="myaction" value="submitJob" />
+			<portlet:param name="myaction" value="submitFlukaJob" />
 		</portlet:actionURL>
 		<portlet:actionURL var="goHome">
 			<portlet:param name="myaction" value="goHome"></portlet:param>
@@ -208,6 +208,30 @@
 					<c:if test="${fn:length(vos)==1 }">
 						<aui:input type="hidden" name="vo" value="${vos[0].vo }"/>
 					</c:if>
+					<br/>
+					<label for="selectInputs"><strong>Inputs</strong></label><br/>
+					<select id="selectInputs" name="input">
+					
+						<c:forTokens var="input" items="${inputs }" delims=";">
+				
+							<aui:option value="${input}">${input}</aui:option>
+						
+						</c:forTokens>
+					
+					</select>
+					<br/>
+					<label for="selectOutputs"><strong>Outputs</strong></label><br/>
+					<select id="selectOutputs" name="output">
+					
+						<aui:option value="none">Same of inputs</aui:option>
+					
+						<c:forTokens var="output" items="${outputs }" delims=";">
+				
+							<aui:option value="${output}">${output}</aui:option>
+						
+						</c:forTokens>
+					
+					</select>
 					
 					<aui:input type="hidden" name="myProxyServer" value="${jdl.myProxyServer }"/>
 					<aui:input type="hidden" name="settedPath" value="${jdl.path }"/>
@@ -241,7 +265,7 @@
 							<a href="#addFile" onclick="$('#parametersDiv').hide(); $('#parametersadd').show();  $('#parametersremove').hide(); $('#parameterStartDiv').hide(); $('#parameterStartadd').show(); $('#parameterStartremove').hide(); $('#parameterStepDiv').hide(); $('#parameterStepadd').show(); $('#parameterStepremove').hide(); $('#parametersDiv input').val(''); $('#parameterStartDiv input').val(''); $('#parameterStepDiv input').val('');"><img src="<%=request.getContextPath()%>/images/NewDelete.png" width="14" height="14" /></a>
 						</div>
 						<div style="clear: both;"></div>
-						<div class="help" style="float: left; width: 80%;">
+						<div class="help" style="float: left; width: 100%;">
 							<strong>Help:</strong> The number of job that you want to submit. Max value corrispond at the number of inputs included into the input tar archive.</a>
 						</div>
 						

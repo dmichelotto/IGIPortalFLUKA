@@ -92,35 +92,48 @@ public class TemplateList {
 	public String toString() {
 		return "TemplateList [user=" + user + ", templates=" + templates + "]";
 	}
-
-	public void share(String path) {
+	
+	public boolean isShared(String path) {
 		
 		String sharePath = getPath(false) + path.substring(path.lastIndexOf("/"), path.length());
 		
-		if(path.equals(sharePath)){
+		return path.equals(sharePath);
+		
+	}
+
+	public void share(String path) {
+		
+		if(isShared(path)){
 			log.info("Template " + path + " already shared");
 			return;
 		}
 		
+		String sharePath = getPath(false) + path.substring(path.lastIndexOf("/"), path.length());
 		sharePath = DiracUtil.checkIfExsist(sharePath);
 		log.info("SHARING\nMove template:\nFrom: " + path + "\nTo: " + sharePath);
 		
 		DiracUtil.mv(new File(path), sharePath);
 		
 	}
-
-	public void unshare(String path) {
+	
+	public boolean isPrivate(String path) {
 		
 		String localPath = getPath(true) + path.substring(path.lastIndexOf("/"), path.length());
 		
-		if(path.equals(localPath)){
+		return path.equals(localPath);
+	}
+
+	public void unshare(String path) {
+		
+		if(isPrivate(path)){
 			log.info("Template " + path + " already private.");
 			return;
 		}
 		
+		String localPath = getPath(true) + path.substring(path.lastIndexOf("/"), path.length());
 		localPath = DiracUtil.checkIfExsist(localPath);
-		
 		log.info("UNSHARING\nMove template:\nFrom: " + path + "\nTo: " + localPath);
+		
 		DiracUtil.mv(new File(path), localPath);
 	}
 	

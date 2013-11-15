@@ -58,6 +58,21 @@
 	
 </script>
 
+<style type="text/css">
+<!--
+
+-->
+
+.adminButton{ 
+	border: 1px solid Yellow;
+	background-color: LightYellow; 
+	margin-bottom: 10px; 
+	padding-left: 10px;  
+	margin-top: 10px;
+}
+
+</style>
+
 <div id="containerDirac">
 	<div id="presentationDirac">My Jobs</div>
 	<div id="contentDirac">
@@ -74,45 +89,36 @@
 			message="save-successufully" />
 		<liferay-ui:success key="shared-successufully"
 			message="shared-successufully" />
+		<liferay-ui:success key="preferences-saved-successfully"
+			message="preferences-saved-successfully" />	
 			
 		<liferay-ui:error key="rescheduling-error"
 			message="rescheduling-error" />
 		<liferay-ui:error key="deleting-error"
 			message="deleting-error" />
-	
-		<portlet:renderURL var="submitUrl">
-			<portlet:param name="myaction" value="showSubmitJob" />
-		</portlet:renderURL>
 		
 		<liferay-portlet:renderURL var="homeUrl">
 			<portlet:param name="myaction" value="showHome" />
 		</liferay-portlet:renderURL>
 		
-		<portlet:renderURL var="manageTemplateUrl">
-			<portlet:param name="myaction" value="showSubmitJob" />
-			<portlet:param name="viewTemplate" value="true" />
-		</portlet:renderURL>
 		
-		<div id="buttonBar">
-		<aui:fieldset >
-		<aui:column columnWidth="50">
-			<aui:form action="${submitUrl }">
-				<aui:button-row>
-					<aui:button type="submit" value="Submit New Job"/>
-					<aui:button type="button" value="Manage Job Template" onClick="${manageTemplateUrl }"/>
-				</aui:button-row>
-			</aui:form>
-		</aui:column>
-		
-		<aui:column columnWidth="50">
-			<aui:form id="refresh" name="refresh">
-				<aui:button-row >
-					<aui:button style="float: right;" type="button" value="Refresh" onClick="location.href='${reloadPage}';"/>
-				</aui:button-row>
-			</aui:form>
-		</aui:column>
-		</aui:fieldset>
-		</div>
+		<c:if test="<%= (themeDisplay.isSignedIn()) && (request.isUserInRole("DiracAdministrator")) %>">
+			<div id="buttonBar" class="adminButton">
+			<portlet:renderURL var="manageTemplateUrl">
+				<portlet:param name="myaction" value="showSubmitJob" />
+				<portlet:param name="viewTemplate" value="true" />
+			</portlet:renderURL>
+			<aui:fieldset >
+			
+				<aui:form action="${manageTemplateUrl }">
+					<aui:button-row>
+						<aui:button type="submit" value="Manage FLUKA Template"/>
+					</aui:button-row>
+				</aui:form>
+			
+			</aui:fieldset>
+			</div>
+		</c:if>
 		<div id="buttonBar">
 		<aui:fieldset >
 		<aui:column columnWidth="50">
@@ -121,9 +127,13 @@
 				<portlet:param name="myaction" value="showSubmitFlukaJob"/>
 				<portlet:param name="path" value="${template }"/>
 			</portlet:renderURL>
+			<portlet:renderURL var="showPreferenceURL">
+				<portlet:param name="myaction" value="showPreferences"/>
+			</portlet:renderURL>
 			<aui:form action="${useTemplateURL }">
 				<aui:button-row>
 					<aui:button type="submit" value="Submit New FLUKA Job"/>
+					<aui:button type="button" value="Edit Preference" onClick="${showPreferenceURL }"/>
 				</aui:button-row>
 			</aui:form>
 			</c:if>

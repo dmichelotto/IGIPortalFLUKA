@@ -1,5 +1,6 @@
 package it.italiangrid.portal.fluka.controllers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,8 @@ import it.italiangrid.portal.fluka.exception.DiracException;
 import it.italiangrid.portal.fluka.model.Jdl;
 import it.italiangrid.portal.fluka.util.DiracConfig;
 import it.italiangrid.portal.fluka.util.DiracUtil;
+import it.italiangrid.portal.fluka.util.LFCUtils;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -140,10 +143,8 @@ public class SubmitFlukaJobController {
 					return vos;
 				}
 			} catch (PortalException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (SystemException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			
@@ -183,6 +184,56 @@ public class SubmitFlukaJobController {
 		} catch (SystemException e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+	
+	@ModelAttribute("inputs")
+	public String getInputs(RenderRequest request){
+		try {
+			
+			User user = PortalUtil.getUser(request);
+			
+			if(user!=null){
+				
+				String userHomeDir = System.getProperty("java.io.tmpdir") + "/users/" + user.getUserId() + "/";
+				File userProperties = new File(userHomeDir + DiracConfig.getProperties("Fluka.properties", "fluka.userproperties.file")); 
+				
+				if(userProperties.exists()){
+					
+					String userHome = DiracConfig.getUserProperties(userProperties, "lfc.fluka.home");
+					
+					return LFCUtils.listToString(LFCUtils.getInputs(userHomeDir, userHome));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	@ModelAttribute("outputs")
+	public String getOutputs(RenderRequest request){
+		try {
+			
+			User user = PortalUtil.getUser(request);
+			
+			if(user!=null){
+				
+				String userHomeDir = System.getProperty("java.io.tmpdir") + "/users/" + user.getUserId() + "/";
+				File userProperties = new File(userHomeDir + DiracConfig.getProperties("Fluka.properties", "fluka.userproperties.file")); 
+				
+				if(userProperties.exists()){
+					
+					String userHome = DiracConfig.getUserProperties(userProperties, "lfc.fluka.home");
+					
+					return LFCUtils.listToString(LFCUtils.getOutputs(userHomeDir, userHome));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 	

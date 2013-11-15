@@ -1,9 +1,12 @@
 package it.italiangrid.portal.fluka.controllers;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import it.italiangrid.portal.fluka.exception.DiracException;
+import it.italiangrid.portal.fluka.util.DiracConfig;
 import it.italiangrid.portal.fluka.util.DiracUtil;
 import it.italiangrid.portal.fluka.util.TemplateList;
 
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.JavaConstants;
@@ -33,7 +38,7 @@ public class TemplateActionController {
 	private static List<String> operationsMessages = Arrays.asList(new String[]{"deleting-template-successufully", "shared-successufully", "unshared-successufully"});
 	
 	@ActionMapping(params = "myaction=deleteTemplate")
-	public void deleteTemplate(ActionRequest request, ActionResponse response){
+	public void deleteTemplate(ActionRequest request, ActionResponse response) throws DiracException{
 		String path = request.getParameter("path");
 		log.info("Deleting: " + path);
 		
@@ -45,6 +50,11 @@ public class TemplateActionController {
 
 			if (user != null && user.getUserId()==owner) {
 				
+				String templateUsed = DiracConfig.getProperties("Fluka.properties", "fluka.template.path");
+				
+				if(path.equals(templateUsed))
+					throw new DiracException("dirac-in-production");
+					
 				DiracUtil.delete(new File(path));
 				
 				log.info("Template deleted");
@@ -52,7 +62,17 @@ public class TemplateActionController {
 			
 			SessionMessages.add(request, "deleting-template-successufully");
 
-		} catch (Exception e) {
+		} catch (IOException e) {
+			e.printStackTrace();
+			PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
+			SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+			SessionErrors.add(request, "deleting-tempalte-error");
+		} catch (PortalException e) {
+			e.printStackTrace();
+			PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
+			SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+			SessionErrors.add(request, "deleting-tempalte-error");
+		} catch (SystemException e) {
 			e.printStackTrace();
 			PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
 			SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
@@ -64,9 +84,9 @@ public class TemplateActionController {
 	}
 	
 	@ActionMapping(params = "myaction=shareTemplate")
-	public void shareTemplate(ActionRequest request, ActionResponse response){
+	public void shareTemplate(ActionRequest request, ActionResponse response) throws DiracException{
 		String path = request.getParameter("path");
-		log.info("Deleting: " + path);
+		log.info("Sharing: " + path);
 		
 		long owner = Long.parseLong(path.split("@")[1]);
 		
@@ -74,6 +94,11 @@ public class TemplateActionController {
 			User user = PortalUtil.getUser(request);
 
 			if (user != null && user.getUserId()==owner) {
+				
+				String templateUsed = DiracConfig.getProperties("Fluka.properties", "fluka.template.path");
+				
+				if(path.equals(templateUsed))
+					throw new DiracException("dirac-in-production");
 				
 				TemplateList tl = new TemplateList(user.getUserId());
 				tl.share(path);
@@ -84,11 +109,16 @@ public class TemplateActionController {
 			
 			SessionMessages.add(request, "shared-successufully");
 			
-		} catch (Exception e) {
+		} catch (PortalException e) {
 			e.printStackTrace();
 			PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
 			SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
-			SessionErrors.add(request, "shared-error");
+			SessionErrors.add(request, "deleting-tempalte-error");
+		} catch (SystemException e) {
+			e.printStackTrace();
+			PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
+			SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+			SessionErrors.add(request, "deleting-tempalte-error");
 		}
 		
 		response.setRenderParameter("myaction", "showSubmitJob");
@@ -96,9 +126,9 @@ public class TemplateActionController {
 	}
 	
 	@ActionMapping(params = "myaction=unshareTemplate")
-	public void unshareTemplate(ActionRequest request, ActionResponse response){
+	public void unshareTemplate(ActionRequest request, ActionResponse response) throws DiracException{
 		String path = request.getParameter("path");
-		log.info("Deleting: " + path);
+		log.info("Unsharing: " + path);
 		
 		long owner = Long.parseLong(path.split("@")[1]);
 		
@@ -106,6 +136,11 @@ public class TemplateActionController {
 			User user = PortalUtil.getUser(request);
 
 			if (user != null && user.getUserId()==owner) {
+				
+				String templateUsed = DiracConfig.getProperties("Fluka.properties", "fluka.template.path");
+				
+				if(path.equals(templateUsed))
+					throw new DiracException("dirac-in-production");
 				
 				TemplateList tl = new TemplateList(user.getUserId());
 				tl.unshare(path);
@@ -115,11 +150,16 @@ public class TemplateActionController {
 			
 			SessionMessages.add(request, "unshared-successufully");
 
-		} catch (Exception e) {
+		} catch (PortalException e) {
 			e.printStackTrace();
 			PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
 			SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
-			SessionErrors.add(request, "unshared-error");
+			SessionErrors.add(request, "deleting-tempalte-error");
+		} catch (SystemException e) {
+			e.printStackTrace();
+			PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
+			SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+			SessionErrors.add(request, "deleting-tempalte-error");
 		}
 		
 		response.setRenderParameter("myaction", "showSubmitJob");
@@ -127,49 +167,53 @@ public class TemplateActionController {
 	}
 	
 	@ActionMapping(params = "myaction=operationMultipleTemplate")
-	public void operationMultipleTemplate(@RequestParam String[] templateList, ActionRequest request, ActionResponse response){
+	public void operationMultipleTemplate(@RequestParam String[] templateList, ActionRequest request, ActionResponse response) throws DiracException{
 		
 		try {
 			User user = PortalUtil.getUser(request);
-
+			
 			if (user != null) {
+				
+				String templateUsed = DiracConfig.getProperties("Fluka.properties", "fluka.template.path");
 				
 				String operation = request.getParameter("operation");
 				log.info("Operation: " + operation);
 				long owner = 0;
 				for (String path : templateList) {
-					switch (operations.indexOf(operation)) {
-					case 0: /* delete */
-						log.info("Deleting: " + path);
-						
-						owner = Long.parseLong(path.split("@")[1]);
-						if(user.getUserId() == owner){
-							DiracUtil.delete(new File(path));
+					if(!path.equals(templateUsed)){
+						switch (operations.indexOf(operation)) {
+						case 0: /* delete */
+							log.info("Deleting: " + path);
+							
+							owner = Long.parseLong(path.split("@")[1]);
+							if(user.getUserId() == owner){
+								DiracUtil.delete(new File(path));
+							}
+							
+							break;
+						case 1: /* share */
+							log.info("Share job: " + path);
+							
+							owner = Long.parseLong(path.split("@")[1]);
+							if(user.getUserId() == owner){
+								TemplateList tl = new TemplateList(user.getUserId());
+								tl.share(path);
+							}
+							
+							break;
+						case 2: /* unshare */
+							log.info("Privatize job: " + path);
+							
+							owner = Long.parseLong(path.split("@")[1]);
+							if(user.getUserId() == owner){
+								TemplateList tl = new TemplateList(user.getUserId());
+								tl.unshare(path);
+							}
+							
+							break;
+						default:
+							log.info("Operation Unrecognized");
 						}
-						
-						break;
-					case 1: /* share */
-						log.info("Share job: " + path);
-						
-						owner = Long.parseLong(path.split("@")[1]);
-						if(user.getUserId() == owner){
-							TemplateList tl = new TemplateList(user.getUserId());
-							tl.share(path);
-						}
-						
-						break;
-					case 2: /* unshare */
-						log.info("Privatize job: " + path);
-						
-						owner = Long.parseLong(path.split("@")[1]);
-						if(user.getUserId() == owner){
-							TemplateList tl = new TemplateList(user.getUserId());
-							tl.unshare(path);
-						}
-						
-						break;
-					default:
-						log.info("Operation Unrecognized");
 					}
 				}
 				
@@ -177,12 +221,63 @@ public class TemplateActionController {
 				
 			}
 
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
 			SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
-			SessionErrors.add(request, "operation-error");
+			SessionErrors.add(request, "deleting-tempalte-error");
+		} catch (PortalException e) {
+			e.printStackTrace();
+			PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
+			SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+			SessionErrors.add(request, "deleting-tempalte-error");
+		} catch (SystemException e) {
+			e.printStackTrace();
+			PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
+			SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
+			SessionErrors.add(request, "deleting-tempalte-error");
 		}
+		
+		response.setRenderParameter("myaction", "showSubmitJob");
+		response.setRenderParameter("viewTemplate", "true");
+	}
+	
+	@ActionMapping(params = "myaction=setInProduction")
+	public void setInProduction(ActionRequest request, ActionResponse response){
+		String path = request.getParameter("path");
+		log.info("Setting template in production: " + path);
+		
+		long owner = Long.parseLong(path.split("@")[1]);
+		
+		try {
+			User user = PortalUtil.getUser(request);
+
+			if (user != null && user.getUserId()==owner) {
+				
+				TemplateList tl = new TemplateList(user.getUserId());
+				
+				
+				if(tl.isShared(path)){
+					
+					DiracConfig.saveProperties(null, "fluka.template.path", path);
+					
+					log.info("Template in Production: " + path);
+					SessionMessages.add(request, "template-setted-in-production-successufully");
+				}else{
+					SessionErrors.add(request, "template-not-shared");
+					log.info("Template not shared.");
+				}
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			SessionErrors.add(request, "setting-in-production-error");
+		}
+		
+		PortletConfig portletConfig = (PortletConfig)request.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
+		SessionMessages.add(request, portletConfig.getPortletName() + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
 		
 		response.setRenderParameter("myaction", "showSubmitJob");
 		response.setRenderParameter("viewTemplate", "true");

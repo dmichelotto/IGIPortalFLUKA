@@ -42,7 +42,7 @@ public class DiracUtil {
 		
 		myJdl.copyJob(null, userId, true, path);
 		
-		myJdl.setJobName("FLUKA_Template_" + myJdl.getJobName());
+		myJdl.setJobName(myJdl.getJobName());
 		
 		return myJdl;
 	}
