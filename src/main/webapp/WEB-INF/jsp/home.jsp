@@ -102,7 +102,7 @@
 		</liferay-portlet:renderURL>
 		
 		
-		<c:if test="<%= (themeDisplay.isSignedIn()) && (request.isUserInRole("DiracAdministrator")) %>">
+		<c:if test="<%= (themeDisplay.isSignedIn()) && (request.isUserInRole("FlukaAdministrator")) %>">
 			<div id="buttonBar" class="adminButton">
 			<portlet:renderURL var="manageTemplateUrl">
 				<portlet:param name="myaction" value="showSubmitJob" />
@@ -261,6 +261,15 @@
 								<portlet:param name="jobId" value="${job.jobId }"/>
 							</portlet:actionURL>
 							<liferay-ui:icon image="configuration" message="Reschedule" url="${rescheduleURL}" />
+							
+							<c:if test="<%= request.isUserInRole("FlukaAdministrator") %>">
+							
+								<portlet:renderURL var="duplicateURL">
+									<portlet:param name="myaction" value="showSubmitJob"/>
+									<portlet:param name="jobId" value="${job.jobId }"/>
+								</portlet:renderURL>
+								<liferay-ui:icon image="copy" message="Duplicate" url="${duplicateURL}" />
+							</c:if>
 						
 							<portlet:actionURL var="deleteURL">
 								<portlet:param name="myaction" value="deleteJob"/>

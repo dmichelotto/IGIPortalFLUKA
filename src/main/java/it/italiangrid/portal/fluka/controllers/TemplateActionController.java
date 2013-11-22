@@ -247,12 +247,12 @@ public class TemplateActionController {
 		String path = request.getParameter("path");
 		log.info("Setting template in production: " + path);
 		
-		long owner = Long.parseLong(path.split("@")[1]);
+		
 		
 		try {
 			User user = PortalUtil.getUser(request);
 
-			if (user != null && user.getUserId()==owner) {
+			
 				
 				TemplateList tl = new TemplateList(user.getUserId());
 				
@@ -268,7 +268,7 @@ public class TemplateActionController {
 					log.info("Template not shared.");
 				}
 				
-			}
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();

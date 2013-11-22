@@ -108,7 +108,6 @@ log.info("Submitting job");
 				String path;
 				String diracWrapper = DiracConfig.getProperties("Fluka.properties", "dirac.wrapper.script");
 				String diracHome = DiracConfig.getProperties("Fluka.properties", "dirac.admin.homedir");
-				String templateHome = DiracConfig.getProperties("Fluka.properties", "dirac.template.home");
 				
 				log.info(uploadRequest.getParameter("settedPath")!=null?uploadRequest.getParameter("settedPath"):"is null");
 				
@@ -253,7 +252,7 @@ log.info("Submitting job");
 				String output = uploadRequest.getParameter("output");
 				log.info("output: " + output);
 				
-				String inputFile = input.substring(input.lastIndexOf("/")+1, input.length()).replace("input_", "");
+				String inputFile = input.substring(input.lastIndexOf("/")+1, input.length()).replace("input_", "").replace(".tar", "").replace(".tgz", "");
 				String inputPath = input.substring(0, input.lastIndexOf("/")).replace(DiracConfig.getProperties("Fluka.properties", "fluka.lfc.homes.path"), "");
 				String newArguments = "%s " + inputFile + " " + inputPath;
 				
@@ -317,63 +316,30 @@ log.info("Submitting job");
 				
 				FileOutputStream jdlFile = new FileOutputStream(path + "/" + jdlFilename);
 				jdlFile.write(jdl.toString().getBytes());
-				jdlFile.close();
-				
-				String saveOnly = uploadRequest.getParameter("saveOnly");
-				if(saveOnly==null){
-				
-					/*
-					 * Download proxy
-					 */
-					
-					DiracAdminUtil util = new DiracAdminUtil();
-					util.dowloadUserProxy(path, user.getScreenName(), jdl.getVo()+"_user");
-					
-					/*
-					 * Submit job
-					 */
-					
-					List<Long> ids = util.submitJob(path, path, jdlFilename);
-					
-					/*
-					 * Adding notify task
-					 */
-					boolean isNotify = isNotificationSetted(user);
-					
-					log.info("notify = " + isNotify);
-					if(isNotify){
-						Notify notify = new Notify(user.getEmailAddress(), user.getFirstName(), ids);
-						Checker.addNotify(notify);
-					}
-				}
+				jdlFile.close();				
 				
 				/*
-				 * Manage Template
+				 * Download proxy
 				 */
-				String saveAsTemplate = uploadRequest.getParameter("saveAsTemplate");
-				String shareTemplate = uploadRequest.getParameter("shareTemplate");
 				
-				log.info("saveAsTempalte: " + saveAsTemplate);				
-				log.info("shareTemplate: " + shareTemplate);
+				DiracAdminUtil util = new DiracAdminUtil();
+				util.dowloadUserProxy(path, user.getScreenName(), jdl.getVo()+"_user");
 				
-				if(saveAsTemplate!=null){
-					String copyPath;
-					if(shareTemplate==null){
-						/*
-						 * user template
-						 */
-						copyPath = System.getProperty("java.io.tmpdir") + "/users/"+user.getUserId()+"/DIRAC/"+ templateHome + "/" + jdl.getJobName().replaceAll(" ", "_")+"@"+user.getUserId();
-						copyPath = DiracUtil.checkIfExsist(copyPath);
-						
-					} else {
-						/*
-						 * shared template
-						 */
-						copyPath = System.getProperty("java.io.tmpdir") + "/"+diracHome+"/"+ templateHome + "/" + jdl.getJobName().replaceAll(" ", "_")+"@"+user.getUserId();
-						copyPath = DiracUtil.checkIfExsist(copyPath);
-					}
-					File destination = new File(copyPath);
-					FileUtil.copyDirectory(jdlFolder, destination);
+				/*
+				 * Submit job
+				 */
+				
+				List<Long> ids = util.submitJob(path, path, jdlFilename);
+				
+				/*
+				 * Adding notify task
+				 */
+				boolean isNotify = isNotificationSetted(user);
+				
+				log.info("notify = " + isNotify);
+				if(isNotify){
+					Notify notify = new Notify(user.getEmailAddress(), user.getFirstName(), ids);
+					Checker.addNotify(notify);
 				}
 				
 				
@@ -384,22 +350,9 @@ log.info("Submitting job");
 				
 				
 			}
-			String saveAsTemplate = uploadRequest.getParameter("saveAsTemplate");
-			String saveOnly = uploadRequest.getParameter("saveOnly");
-			String shareTemplate = uploadRequest.getParameter("shareTemplate");
 			
-			if(saveOnly!=null){
-				response.setRenderParameter("myaction", "showSubmitJob");
-				response.setRenderParameter("viewTemplate", "true");
-			}else{
-				SessionMessages.add(request, "submit-successufully");
-			}
-			if(saveAsTemplate!=null){
-				SessionMessages.add(request, "save-successufully");
-			}
-			if(shareTemplate!=null){
-				SessionMessages.add(request, "shared-successufully");
-			}
+			SessionMessages.add(request, "submit-successufully");
+			
 			return;
 
 		} catch (Exception e) {

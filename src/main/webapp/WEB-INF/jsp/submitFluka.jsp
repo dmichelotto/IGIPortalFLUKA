@@ -181,7 +181,7 @@
 					<div>
 						<aui:input type="text" label="Job Name" name="jobName" value="${jdl.jobName }"/>
 						<div class="help" style="float: left; width: 100%; margin-bottom: 10px;">
-							<strong>Help:</strong> The "%s" indicate the nuober of the job.</a>
+							<strong>Help:</strong> The flag "%s" indicates the number of the job. Useful for parametric jobs</a>
 						</div>
 					</div>
 					<div id="executableDiv" style="display:none">
@@ -209,7 +209,7 @@
 						<aui:input type="hidden" name="vo" value="${vos[0].vo }"/>
 					</c:if>
 					<br/>
-					<label for="selectInputs"><strong>Inputs</strong></label><br/>
+					<label for="selectInputs"><strong>Input</strong></label><br/>
 					<select id="selectInputs" name="input">
 					
 						<c:forTokens var="input" items="${inputs }" delims=";">
@@ -220,7 +220,7 @@
 					
 					</select>
 					<br/>
-					<label for="selectOutputs"><strong>Outputs</strong></label><br/>
+					<label for="selectOutputs"><strong>Output Folder</strong></label><br/>
 					<select id="selectOutputs" name="output">
 					
 						<aui:option value="none">Same of inputs</aui:option>
@@ -266,7 +266,7 @@
 						</div>
 						<div style="clear: both;"></div>
 						<div class="help" style="float: left; width: 100%;">
-							<strong>Help:</strong> The number of job that you want to submit. Max value corrispond at the number of inputs included into the input tar archive.</a>
+							<strong>Help:</strong> Used for parametric submission. Is the number of jobs that you want to submit. Its value can be equal or less then the number of input files included in the input tar archive.</a>
 						</div>
 						
 						
@@ -282,7 +282,7 @@
 						</div>
 						<div style="clear: both;"></div>
 						<div class="help" style="float: left; width: 80%;">
-							<strong>Help:</strong> The number of first job. <a href="#moreHelpParameters" onclick="changeMoreHelpVisibility('moreHelpParameters', $(this));">More</a>
+							<strong>Help:</strong> Is the first job number used to start the submission. <a href="#moreHelpParameters" onclick="changeMoreHelpVisibility('moreHelpParameters', $(this));">More</a>
 							<div id="moreHelpParameters" class="moreHelp">
 								Eg.
 								<ul>

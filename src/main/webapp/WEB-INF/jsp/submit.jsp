@@ -265,6 +265,15 @@
 											<portlet:param name="path" value="${template.path }"/>
 										</portlet:renderURL>
 										<liferay-ui:icon image="edit" message="Edit" url="${useTemplateURL}" />
+										<c:if test="${template.type == 'Shared' && template.path != productionTemplate  }">
+											
+												<portlet:actionURL var="setInProductionURL">
+													<portlet:param name="myaction" value="setInProduction"/>
+													<portlet:param name="path" value="${template.path }"/>
+												</portlet:actionURL>
+												<liferay-ui:icon image="edit" message="Set In Production" url="${setInProductionURL}" />
+												
+											</c:if>
 										
 										<c:if test="${template.owner == user.userId}">
 											<c:if test="${template.type == 'Private' }">
@@ -281,12 +290,6 @@
 													<portlet:param name="path" value="${template.path }"/>
 												</portlet:actionURL>
 												<liferay-ui:icon image="page" message="Private" url="${unshareTemplateURL}" />
-											
-												<portlet:actionURL var="setInProductionURL">
-													<portlet:param name="myaction" value="setInProduction"/>
-													<portlet:param name="path" value="${template.path }"/>
-												</portlet:actionURL>
-												<liferay-ui:icon image="edit" message="Set In Production" url="${setInProductionURL}" />
 												
 											</c:if>
 											<c:if test="${template.path != productionTemplate  }">
